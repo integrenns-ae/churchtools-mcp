@@ -101,4 +101,23 @@ docker build -t churchtools-mcp-server .
 docker run --rm -p 3000:3000 --env-file .env churchtools-mcp-server
 ```
 
-Or use `docker-compose.example.yml` as a starting point.
+Or use `docker-compose.example.yml` as a starting point to run the published `ghcr.io/samuelspagl/ct-mcp:latest` image.
+
+## GitHub Actions
+
+Pull requests run version gating, secret scanning with Gitleaks, Node typecheck/test/build, and a Docker image build without pushing. The version gate requires `VERSION`, `package.json`, and `package-lock.json` to contain the same SemVer value. Pull requests fail if the version was not changed from `main` or if tag `v<VERSION>` already exists.
+
+Every push to `main` creates tag `v<VERSION>` and a GitHub release. The release includes the npm build output archive from `dist/`, plus package metadata and the `VERSION` file. The same workflow builds and pushes Docker images to GitHub Container Registry:
+
+```text
+ghcr.io/<owner>/<repo>:latest
+ghcr.io/<owner>/<repo>:v<VERSION>
+```
+
+Before merging a release-bound pull request, update all three version locations:
+
+```text
+VERSION
+package.json
+package-lock.json
+```
