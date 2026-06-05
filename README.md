@@ -78,21 +78,27 @@ The HTTP endpoints are:
 
 ## Tools
 
-Dedicated read tools include current user, persons, person groups/events, groups, group members, events, event agenda, calendars, appointments, resources, bookings, songs, and wiki pages/categories.
+Dedicated `ct_*` tools cover current user context, people, groups, events, calendars, resources, bookings, absences, service requests, songs, wiki search/read, and masterdata. The server intentionally exposes only the `ct_*` namespace so clients do not see duplicate `ct_*` and `churchtools_*` variants of the same workflows.
+
+Event tools use explicit scope:
+
+- `ct_list_events` and `ct_get_event_briefing` are general visible-event tools and do not imply that a person is involved.
+- `ct_list_my_involved_events`, `ct_list_person_involved_events`, and `ct_get_my_involved_event_briefing` use `/persons/{personId}/events`, meaning ChurchTools marks the person as involved in those events.
+- `ct_list_my_service_requests` is the primary tool for concrete assigned tasks/service requests; those are separate from involved events.
 
 Dedicated write tools:
 
-- `churchtools_update_song`
-- `churchtools_update_event`
-- `churchtools_update_wiki_category`
+- `ct_update_song`
+- `ct_update_event`
+- `ct_update_wiki_category`
 
 All write tools use MCP elicitation for confirmation when supported. If the client does not advertise elicitation support, the tool returns `confirmation_required`; retry the same tool with `confirm=true` after user confirmation.
 
 Generic OpenAPI tools:
 
-- `churchtools_search_actions`
-- `churchtools_execute_read_action`
-- `churchtools_execute_write_action`
+- `ct_search_actions`
+- `ct_execute_read_action`
+- `ct_execute_write_action`
 
 ## Docker
 
@@ -101,7 +107,11 @@ docker build -t churchtools-mcp-server .
 docker run --rm -p 3000:3000 --env-file .env churchtools-mcp-server
 ```
 
-Or use `docker-compose.example.yml` as a starting point to run the published `ghcr.io/samuelspagl/ct-mcp:latest` image.
+Or use `docker-compose.example.yml` as a starting point to run the published `ghcr.io/samuelspagl/ct-mcp:latest` image:
+
+```bash
+docker compose -f docker-compose.example.yml up
+```
 
 ## GitHub Actions
 
