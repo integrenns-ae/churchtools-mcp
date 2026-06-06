@@ -69,9 +69,23 @@ auth layer, so `MCP_SERVER_TOKEN` / `pat-forwarding` do not apply. Only `CHURCHT
 
 The token authenticates as a specific ChurchTools user — the server can do everything that user can do.
 
-1. Log in to your ChurchTools instance.
-2. Open your profile → settings, and create/copy a personal login token, **or** call
-   `GET /api/persons/{personId}/logintoken` while logged in.
+**Via the ChurchTools web UI (recommended):**
+
+1. Log in to your ChurchTools instance in a browser.
+2. Click your name / avatar in the top-right corner → **My profile** (Mein Profil).
+3. Open the **Security** tab (Sicherheit).
+4. Scroll to the **Login token** section — copy the existing token, or click **Generate** to create one.
+
+**Via the API (advanced):**
+
+While logged in, call:
+```
+GET https://<your-domain>.church.tools/api/persons/{personId}/logintoken
+```
+Your `personId` is shown in the URL when you open your profile, or returned by `GET /api/whoami`.
+The endpoint creates a token on the fly if none exists yet.
+
+---
 
 Treat the token like a password. Anyone with it has your ChurchTools permissions.
 
