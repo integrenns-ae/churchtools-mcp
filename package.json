@@ -1,20 +1,31 @@
 {
-  "name": "churchtools-mcp-server",
-  "version": "0.2.0",
-  "description": "Streamable HTTP MCP server for ChurchTools.",
+  "name": "churchtools-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for the ChurchTools API — runs locally over stdio (npx) or as a Streamable HTTP service. Fork of samuelspagl/ct-mcp with a stdio entrypoint.",
   "type": "module",
   "main": "dist/index.js",
+  "bin": {
+    "churchtools-mcp": "dist/stdio.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch src/index.ts",
+    "dev:stdio": "tsx watch src/stdio.ts",
     "start": "node dist/index.js",
+    "start:stdio": "node dist/stdio.js",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "churchtools",
     "mcp",
-    "model-context-protocol"
+    "model-context-protocol",
+    "stdio"
   ],
   "license": "MIT",
   "engines": {

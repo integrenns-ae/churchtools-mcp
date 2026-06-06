@@ -1,4 +1,4 @@
-export const SERVER_NAME = "churchtools-mcp-server";
+export const SERVER_NAME = "churchtools-mcp";
 export const SERVER_VERSION = "0.1.0";
 export const DEFAULT_PORT = 3000;
 export const DEFAULT_HOST = "0.0.0.0";
