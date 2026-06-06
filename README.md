@@ -15,8 +15,21 @@ Two ways to run it:
 
 ## Use with Claude (stdio / npx)
 
-Add the server to your MCP client config. Example for Claude Desktop
-(`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
+You don't need to clone this repo or install anything by hand — `npx` downloads the package on first
+start. You just edit one config file.
+
+### Requirements
+
+- **[Node.js](https://nodejs.org) (LTS)** installed. This provides `npx`, which Claude uses to launch
+  the server. This is the only real prerequisite — without Node there is no `npx`.
+- A **ChurchTools instance** and a **login token** (see *Getting your login token* below).
+- An **MCP client** — usually the **Claude Desktop app** (which also powers Cowork).
+
+### Installation (3 steps)
+
+**1. Add the server to your client config.** For Claude Desktop, edit
+`claude_desktop_config.json` (macOS: `~/Library/Application Support/Claude/`; Windows:
+`%APPDATA%\Claude\`). Add an `mcpServers` entry:
 
 ```json
 {
@@ -33,17 +46,24 @@ Add the server to your MCP client config. Example for Claude Desktop
 }
 ```
 
+**2. Fully restart Claude** (quit completely — ⌘Q on macOS — and reopen). MCP servers are only read at
+startup.
+
+**3. Test it** in a new chat: *“Who am I in ChurchTools?”* — this calls `ct_whoami` and should return
+your person record.
+
+For **Claude Code** (CLI) instead:
+
+```bash
+claude mcp add churchtools \
+  --env CHURCHTOOLS_BASE_URL=https://your-domain.church.tools \
+  --env CHURCHTOOLS_PAT=your-churchtools-login-token \
+  -- npx -y churchtools-mcp
+```
+
 In stdio mode the server is single-user: it always uses `CHURCHTOOLS_PAT` and there is no inbound MCP
 auth layer, so `MCP_SERVER_TOKEN` / `pat-forwarding` do not apply. Only `CHURCHTOOLS_BASE_URL` and
 `CHURCHTOOLS_PAT` are required.
-
-You can also run it directly:
-
-```bash
-CHURCHTOOLS_BASE_URL=https://your-domain.church.tools \
-CHURCHTOOLS_PAT=your-churchtools-login-token \
-npx -y churchtools-mcp
-```
 
 ### Getting your ChurchTools login token
 
@@ -54,6 +74,16 @@ The token authenticates as a specific ChurchTools user — the server can do eve
    `GET /api/persons/{personId}/logintoken` while logged in.
 
 Treat the token like a password. Anyone with it has your ChurchTools permissions.
+
+### Troubleshooting
+
+| Symptom | Likely cause / fix |
+| --- | --- |
+| `churchtools` doesn't appear after restart | Config not fully reloaded — **quit Claude completely** (⌘Q), not just the window, then reopen. Check the JSON is valid (no trailing commas). |
+| Server fails to start / `npx` not found | Node.js not installed, **or** the GUI app didn't inherit your shell `PATH`. Use the absolute path to npx, e.g. `"command": "/usr/local/bin/npx"` (find yours with `which npx`). |
+| `ct_whoami` / API calls fail | Wrong or expired `CHURCHTOOLS_PAT`, or wrong `CHURCHTOOLS_BASE_URL`. The base URL is your instance root (e.g. `https://your-domain.church.tools`), **without** `/api`. |
+| Slow first response | First run downloads the package via `npx`; subsequent starts are fast. |
+| Want to update | `npx -y churchtools-mcp` always fetches the latest published version on start; just restart Claude. |
 
 ### ⚠️ This server can write and delete data
 
